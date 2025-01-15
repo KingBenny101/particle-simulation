@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.28)
 project(CMakeSFMLProject LANGUAGES CXX)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(RESOURCES_DIR ${CMAKE_SOURCE_DIR}/resources)
 
 include(FetchContent)
 FetchContent_Declare(SFML
@@ -12,5 +12,14 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
+find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+ 
+include_directories(include)
+
 add_executable(main src/main.cpp)
-target_link_libraries(main PRIVATE SFML::Graphics)
+target_link_libraries(main PRIVATE SFML::Graphics Eigen3::Eigen)
+
+add_custom_command(TARGET main POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${RESOURCES_DIR}/ $<TARGET_FILE_DIR:main>/resources
+)
